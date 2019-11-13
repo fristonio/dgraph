@@ -887,6 +887,38 @@ func TestLanguageOrderNonIndexed2(t *testing.T) {
 		js)
 }
 
+func TestLanguageOrderIndexed1(t *testing.T) {
+	query := `
+	{
+		q(func:eq(lang_type, "Test"), orderasc: name_lang_index@de)  {
+			name_lang_index@de
+			name_lang_index@sv
+		}
+	}
+	`
+
+	js := processQueryNoErr(t, query)
+	require.JSONEq(t,
+		`{ "data": { "q": [ { "name_lang_index@de": "öffnen", "name_lang_index@sv": "zon" }, { "name_lang_index@de": "zumachen", "name_lang_index@sv": "öppna0" } ] } }`,
+		js)
+}
+
+func TestLanguageOrderIndexed2(t *testing.T) {
+	query := `
+	{
+		q(func:eq(lang_type, "Test"), orderasc: name_lang_index@sv)  {
+			name_lang_index@de
+			name_lang_index@sv
+		}
+	}
+	`
+
+	js := processQueryNoErr(t, query)
+	require.JSONEq(t,
+		`{ "data": { "q": [ { "name_lang_index@de": "öffnen", "name_lang_index@sv": "zon" }, { "name_lang_index@de": "zumachen", "name_lang_index@sv": "öppna0" } ] } }`,
+		js)
+}
+
 // Test sorting / ordering by dob.
 func TestToFastJSONOrderDesc_pawan(t *testing.T) {
 
